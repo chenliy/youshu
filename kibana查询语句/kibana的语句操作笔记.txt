@@ -1,0 +1,86 @@
+	
+多条件查询:
+1:::::::::
+	GET exposure_desk/exposure_desk/_search
+	{
+	  "query": {
+		"bool": {
+		  "must": [
+			{
+			  "match": {
+				  "case_code": "（2007）乐执字第172号"
+				}
+			},
+			{
+			  "match": {
+				"name": "乐清市光明电子电器有限公司"
+			  }
+			}
+		  ]
+		}
+	  }
+	}
+	
+2:::::::
+	GET shixin_beizhixing/shixin_beizhixing_total/_search
+	{
+	  "query": {
+		"bool": {
+		  "must": [
+			{
+			  "term": {
+				"source": {
+				  "value": "被执行人网"
+				}
+			  }
+			},
+			{
+			  "range": {
+				"update_time": {
+				  "gte": "2018-05-22T00:00:00+08:00",
+				  "lte": "2018-05-23T00:00:00+08:00"
+				}
+			  }
+			}
+		  ]
+		}	
+	  }
+	}
+	
+导数据:
+	PUT exposure_desk_v001/exposure_desk/e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632
+	{
+	  "reason":"其他买卖合同纠纷",
+	  "address":"乐清市北白象镇电子工业园开发路78号",
+	  "case_code":"（2007）乐执字第172号",
+	  "exposure_type":"限制招投标",
+	  "business_entity":"陈玉君",
+	  "_id_":"e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632",
+	  "source":"浙江政务网",
+	  "operator":"wulianguo",
+	  "card_num":"145526193",
+	  "reg_date":"2007-01-09T00:00:00+08:00",
+	  "update_time":"2018-05-28T14:25:27+08:00",
+	  "release_date":"2017-08-02T00:00:00+08:00",
+	  "name":"乐清市光明电子电器有限公司",
+	  "id":"e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632",
+	  "court_name":"乐清市人民法院",
+	  "start_date":"1900-01-01T00:00:00+08:00"
+	}
+	
+判断字段在或不在
+	GET executive_announcement/executive_announcement_total/_search
+	{
+		"query": {
+		  
+		  "bool": {
+			"must_not": [
+			  {
+			   "exists": {
+				"field": "update_time"
+				}
+			  }
+			]
+		  }
+		}
+	}

@@ -1,0 +1,186 @@
+# 食品经营许可证 157687 食品流通许可证 19168 餐饮服务许可证 11625
+# 保健食品经营许可证 4572 网络食品经营备案 41
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "source": {
+              "value": "北京市食品药品监督管理局"
+            }
+          }
+        },
+        {
+          "term": {
+            "cer_name": {
+              "value": "网络食品经营备案"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "create_time": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+# 正常
+# 太原市食品药品监督管理局 584 上海市食品药品监督管理局 211001 
+# 福建省食品药品监督管理局 357826 浙江省食品药品监督管理局 48569
+# 中山市食品药品监督管理局 3592 北京市食品药品监督管理局 191188
+# 江西省食品药品监督管理局 226207 成都市食品药品监督管理局 133216
+# 贵阳市食品药品监督管理局 21403 广州市食品药品监督管理局 202991 34464
+# 佛山市食品药品监督管理局 58168 11063 甘肃省食品药品监督管理局 255274
+# 吉林省食品药品监督管理局 306040 广东省食品药品监督管理局 1046261
+# 天津市食品药品监督管理局 146770 湖北省食品药品监督管理局 15513
+# 山东省食品药品监督管理局 633355 东莞市食品药品监督管理局 117110 27972
+# 河南省食品药品监督管理局 662990 
+
+
+# 不确定 
+# 辽宁省食品药品监督管理局 702506   河北省食品药品监督管理局 414774
+# 黑龙江省食品药品监督管理局 215732  
+# 湖南省食品药品监督管理局 363550 深圳市食品药品监督管理局 17249 
+# 广西壮族自治区食品药品监督管理局 330274 
+
+# 6433217
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    {
+      "create_time": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "term": {
+      "source": {
+        "value": "广东省食品药品监督管理局"
+      }
+    }
+  },
+  "sort": [
+    {
+      "create_time": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+
+
+# 成都市食品药品监督管理局 141153 北京市食品药品监督管理局 191188 193093
+# 太原市食品药品监督管理局 584 654  江西省食品药品监督管理局 228060 230511
+# 河南省食品药品监督管理局 665571 665889 湖北省食品药品监督管理局 15513 15775
+# 辽宁省食品药品监督管理局 719592 738810
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "term": {
+      "source": {
+        "value": "河南省食品药品监督管理局"
+      }
+    }
+  },
+  "sort": [
+    {
+      "RS_CREATE_TIME": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query":{
+    "term": {
+      "source": {
+        "value": "河南省食品药品监督管理局"
+      }
+    }
+  },
+  "sort": [
+    {
+      "RS_CREATE_TIME": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+GET food_drug_administration/food_drug_administration/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "regexp":{
+            "ent_name": "[ ]{1,}.*?"
+          }
+        },
+        {
+          "regexp":{
+            "ent_name": ".*?[ ]{1,}"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+#  长春市:98931 98994      http://117.78.38.47:9090
+#  吉林市:43693 41734      http://122.137.242.71:9091
+#  四平市:25141 24335      http://139.212.252.114:9092
+#  辽源市:13504 13275       http://175.23.61.146:9093
+#  通化市:21381 20993      http://139.212.252.114:9094
+#  白山市:13548 13261      http://222.163.248.211:9095
+#  松原市:19993 19475      http://222.163.248.211:9095
+#  白城市:20510 20290      http://175.18.172.54:9096
+#  延边州:36970 36315      http://139.212.252.114:9098
+#  公主岭市:8037 7886      http://139.212.252.114:9101
+#  梅河口市:7820 7725      http://139.212.252.114:9102
+#  长白山管委会:1781 1757   http://211.141.9.2:7045
+GET food_drug_administration/food_drug_administration/_search 
+{
+  
+  "query": {
+    "bool": {
+      "must": [
+        {"term": {"source": {"value": "吉林省食品药品监督管理局"}}},
+          {"match_phrase": {"url": "http://211.141.9.2:7045"}}
+        
+      ]
+    }
+    
+  },
+  "sort": [
+    {
+      "create_time": {
+        "order": "desc"
+      }
+    }
+  ]
+
+}

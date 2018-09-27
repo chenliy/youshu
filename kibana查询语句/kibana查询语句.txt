@@ -1,0 +1,306 @@
+﻿http://10.10.10.143:7475/captcha/vcode
+
+#  should或条件
+#  regexp正则表达式
+#  must与条件
+#  must_not :must的反  
+#  reindex  到数据到另一个索引(同地址)    参考链接: https://blog.csdn.net/it_lihongmin/article/details/78601697
+#  exists 可以判断一个字段在而es中是否存在 
+#  修改更新数据
+#  聚合函数
+
+GET exposure_desk_v002/exposure_desk/_search
+{
+    "query":{
+      "match_all": {}
+    },
+    "size":0,
+    
+    "aggs": {
+    "group_by_county": {
+      "terms": {
+        "field": "itype",
+        "size":200
+      }
+    }
+  }
+}
+
+POST /executive_announcement/executive_announcement_total/_update_by_query
+{
+  "script": {
+    "inline": "ctx._source.party_type_name='自然人'",
+    "lang": "painless"
+  },
+  "query": {
+    "term": {
+      "party_type_name": {
+        "value": "1"
+      }
+    }
+  }
+}
+
+GET executive_announcement_v003/executive_announcement_total/_search
+{
+  "query": {
+    "bool": {
+      "must_not": [
+        {
+          "exists": {
+            "field":"source"
+          }
+        }
+      ]
+    }
+    
+  }
+}
+
+GET food_drug_administration_v001/food_drug_administration/_search
+{
+  "query": {
+    "bool": {
+      "must_not": [
+        {
+          "regexp":{
+            "ent_name": "[ ]{1,}.*?"
+          }
+        },
+        {
+          "regexp":{
+            "ent_name": ".*?[ ]{1,}"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET food_drug_administration_v001/food_drug_administration/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "regexp":{
+            "ent_name": "[ ]{1,}.*?"
+          }
+        },
+        {
+          "regexp":{
+            "ent_name": ".*?[ ]{1,}"
+          }
+        }
+      ]
+    }
+  }
+}
+
+POST _reindex  
+{  
+  "source": {  
+    "index": "food_drug_administration_v001",  
+    "type": "food_drug_administration",  
+    "query": {
+      "bool": {
+        "must_not": [
+          {
+            "regexp":{
+              "ent_name": "[ ]{1,}.*?"
+            }
+          },
+          {
+            "regexp":{
+              "ent_name": ".*?[ ]{1,}"
+            }
+          }
+        ]
+      }
+    }
+  },  
+  "dest": {  
+    "index": "food_drug_administration_v002"  
+  }  
+}
+
+失信
+GET shixin_beizhixing/shixin_beizhixing_total/_search
+{
+  "size": 300, 
+  "query": {
+    "term": {
+      "source": {
+        "value": "海西蒙古族藏族自治州中级人民法院审判信息网"
+      }
+    }
+  }
+}
+
+GET exposure_desk/exposure_desk/_search
+{
+  "size": 300, 
+  "query": {
+    "bool": {
+      "must": [
+        {"term": {
+          "source": {
+            "value": "白城市中级人民法院司法公开网"
+          }
+        }},
+        {"range": {
+          "update_time": {
+            "gte": "2017-12-28T08:24:59+08:00",
+            "lte": "2017-12-31T19:50:56+08:00"
+          }
+        }}
+      ]
+    }
+  }
+}
+
+
+GET executive_announcement/executive_announcement_gaoyuan/_search
+{
+  "size": 1503, 
+  "query": {
+    "bool": {
+      "must": [
+        {"term": {
+          "source": {
+            "value": "济南市中级人民法院"
+          }
+        }},
+       {"range": {
+          "update_time": {
+            "gte": "2017-12-28T11:45:56+08:00",
+            "lte": "2018-01-31T22:50:56+08:00"
+          }
+        }}
+      ]
+    }
+  }
+  
+  删除数据
+  post zhaopin/jobs/_delete_by_query
+后面可以跟条件
+  
+  
+  
+  
+查看数据
+GET shixin_beizhixing/shixin_beizhixing_gaoyuan/e_f3dc75ff265ba2e997cbc04a054141c4
+
+修改数据
+POST shixin_beizhixing/shixin_beizhixing_total/e_f3dc75ff265ba2e997cbc04a054141c4/_update
+{
+  "doc":{
+    "publish_date": "2016-01-15T00:00:00+08:00"
+  }
+}
+
+
+	
+多条件查询:
+1:::::::::
+	GET exposure_desk/exposure_desk/_search
+	{
+	  "query": {
+		"bool": {
+		  "must": [
+			{
+			  "match": {
+				  "case_code": "（2007）乐执字第172号"
+				}
+			},
+			{
+			  "match": {
+				"name": "乐清市光明电子电器有限公司"
+			  }
+			}
+		  ]
+		}
+	  }
+	}
+	
+2:::::::
+	GET shixin_beizhixing/shixin_beizhixing_total/_search
+	{
+	  "query": {
+		"bool": {
+		  "must": [
+			{
+			  "term": {
+				"source": {
+				  "value": "被执行人网"
+				}
+			  }
+			},
+			{
+			  "range": {
+				"update_time": {
+				  "gte": "2018-05-22T00:00:00+08:00",
+				  "lte": "2018-05-23T00:00:00+08:00"
+				}
+			  }
+			}
+		  ]
+		}	
+	  }
+	}
+	
+导数据:
+	PUT exposure_desk_v001/exposure_desk/e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632
+	{
+	  "reason":"其他买卖合同纠纷",
+	  "address":"乐清市北白象镇电子工业园开发路78号",
+	  "case_code":"（2007）乐执字第172号",
+	  "exposure_type":"限制招投标",
+	  "business_entity":"陈玉君",
+	  "_id_":"e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632",
+	  "source":"浙江政务网",
+	  "operator":"wulianguo",
+	  "card_num":"145526193",
+	  "reg_date":"2007-01-09T00:00:00+08:00",
+	  "update_time":"2018-05-28T14:25:27+08:00",
+	  "release_date":"2017-08-02T00:00:00+08:00",
+	  "name":"乐清市光明电子电器有限公司",
+	  "id":"e_e6b0ccf2ebf88b7f0bdb91ad36f1a8b6e_2b14f73a492c9e5084ebef17629e1632",
+	  "court_name":"乐清市人民法院",
+	  "start_date":"1900-01-01T00:00:00+08:00"
+	}
+	
+判断字段在或不在
+	GET executive_announcement/executive_announcement_total/_search
+	{
+		"query": {
+		  
+		  "bool": {
+			"must_not": [
+			  {
+			   "exists": {
+				"field": "update_time"
+				}
+			  }
+			]
+		  }
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
